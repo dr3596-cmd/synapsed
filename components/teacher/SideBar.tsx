@@ -53,7 +53,7 @@ export default function Sidebar({
       <aside
         className={`p-4 glass relative ${
           collapsed ? "w-[72px] p-2" : "w-[260px] p-3"
-        } fixed z-40 h-[calc(100dvh-2rem)] top-4 left-4 transition-[width] duration-[360ms] ease-[cubic-bezier(0.2,1.1,0.2,1)]`}
+        } fixed z-40 h-[calc(100dvh-2rem)] top-4 left-4 transition-[width] [transition-duration:360ms] [transition-timing-function:cubic-bezier(0.2,1.1,0.2,1)]`}
       >
         {/* Collapse toggle anchored to the sidebar itself */}
         <button
@@ -91,7 +91,7 @@ export default function Sidebar({
             const active = (id && activeId === id) || (!!path && pathname === path);
             const Item = (
               <div
-                className={`flex items-center ${collapsed ? "justify-center px-0" : "gap-3 px-3"} py-2 rounded-[22px] transition-all duration-[360ms] ease-in-out hover:-translate-y-0.5 ${
+                className={`flex items-center ${collapsed ? "justify-center px-0" : "gap-3 px-3"} py-2 rounded-[22px] transition-all [transition-duration:360ms] ease-in-out hover:-translate-y-0.5 ${
                   active
                     ? "bg-[rgba(40,165,125,0.12)] font-semibold text-slate-900"
                     : "text-slate-700 bg-transparent hover:bg-transparent hover:ring-2 hover:ring-[rgba(40,165,125,0.28)]"

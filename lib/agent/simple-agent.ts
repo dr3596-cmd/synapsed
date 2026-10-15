@@ -185,7 +185,19 @@ async function callTools(state: MessagesState) {
         });
       }
 
-      const result = await tool.invoke(toolCallInput);
+      // A failing tool (e.g. the model sent malformed arguments) should not crash the whole
+      // request; report the error back so the model can recover or answer without it.
+      let result;
+      try {
+        result = await tool.invoke(toolCallInput);
+      } catch (toolError) {
+        const toolErrorMessage = toolError instanceof Error ? toolError.message : String(toolError);
+        console.error(`[simple-agent] Tool ${toolCall.name} failed:`, toolErrorMessage);
+        return new ToolMessage({
+          content: `Tool ${toolCall.name} failed: ${toolErrorMessage}`,
+          tool_call_id: toolCall.id || '',
+        });
+      }
 
       // Handle different return types
       let content: string;

@@ -24,4 +24,4 @@ export const GEMINI_MODEL =
  * @see module docstring above — LangGraph + `ChatGoogleGenerativeAI.bindTools` only.
  */
 export const GEMINI_AGENT_MODEL =
-  process.env.GEMINI_AGENT_MODEL?.trim() || "gemini-2.5-flash";
+  process.env.GEMINI_AGENT_MODEL?.trim() || "gemini-3-flash-preview";
