@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { questionsMissingAnswerKey } from '@/lib/quizGrading';
+import { questionsMissingAnswerKey } from '@/lib/quizzes/grading';
 
 // POST: Publish or archive a quiz
 export async function POST(

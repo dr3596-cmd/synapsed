@@ -6,12 +6,12 @@ import useSWR from "swr";
 import ReactMarkdown from "react-markdown";
 import { useSession } from "@/lib/auth/client";
 import { ArrowRight, ChevronDown, ClipboardCheck, MessageSquare, Sparkles } from "lucide-react";
-import Sidebar from "@/components/student/StudentSideBar";
+import Sidebar from "@/components/student/StudentSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import type { ClassFeedback, PopQuizFeedback } from "@/lib/feedback";
+import type { ClassFeedback, PopQuizFeedback } from "@/lib/students/feedback";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);

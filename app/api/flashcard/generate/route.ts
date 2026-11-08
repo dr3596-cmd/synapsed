@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
-import { callGemini } from '@/lib/flashcard/generate';
+import { callGemini } from '@/lib/flashcards/generate';
 import { requirePathwayNodeAccess } from '@/lib/auth';
 
 interface FlashcardData {

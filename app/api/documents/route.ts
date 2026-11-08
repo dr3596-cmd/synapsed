@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma'
-import { uploadStudentDocumentToR2 } from '@/lib/r2/studentDoctoR2'
+import { uploadStudentDocumentToR2 } from '@/lib/storage/uploadStudentDocument'
 import { DocumentType } from '@prisma/client'
 
 // GET /api/documents - Get all documents for the current user

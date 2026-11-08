@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { generatePathwayForStudent } from "@/lib/learning-paths/generatePathway";
+import { generatePathwayForStudent } from "@/lib/pathways/generatePathway";
 import { getOrBuildTopicMap, NoCourseMaterialError } from "@/lib/course/topicMap";
 import { isStudyServiceRequest, requireClassProfessor } from "@/lib/auth";
 

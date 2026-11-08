@@ -5,11 +5,11 @@ import useSWR from "swr";
 import { useSession } from "@/lib/auth/client";
 import { BookOpen, ClipboardCheck, GraduationCap, Trophy } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import Sidebar from "@/components/student/StudentSideBar";
+import Sidebar from "@/components/student/StudentSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import type { ProgressCount, StudentAchievements } from "@/lib/achievements";
+import type { ProgressCount, StudentAchievements } from "@/lib/students/achievements";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);

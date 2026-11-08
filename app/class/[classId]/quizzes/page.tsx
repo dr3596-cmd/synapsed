@@ -5,8 +5,8 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from '@/lib/auth/client';
-import { QuizList } from '@/components/assessments';
-import { ClassTabs } from '@/components/student/ClassTabs';
+import { QuizList } from '@/components/student/quizzes';
+import { ClassTabs } from '@/components/student/dashboard/ClassTabs';
 
 export default function QuizzesPage() {
   const { data: session } = useSession();

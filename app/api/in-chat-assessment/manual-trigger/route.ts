@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
-import { invokeAgent } from '@/lib/agent/simple-agent';
-import { ConversationService } from '@/lib/agent/conversation-service';
+import { invokeAgent } from '@/lib/agent/tutorAgent';
+import { ConversationService } from '@/lib/agent/conversationService';
 
 export async function POST(request: NextRequest) {
   try {

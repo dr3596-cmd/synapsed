@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { invokeAgent } from "@/lib/agent/simple-agent";
-import { ConversationService } from "@/lib/agent/conversation-service";
+import { invokeAgent } from "@/lib/agent/tutorAgent";
+import { ConversationService } from "@/lib/agent/conversationService";
 import {
   getCachedVoiceTurn,
   pruneExpiredVoiceTurns,
   setCachedVoiceTurn,
-} from "@/lib/agent/voice-turn-store";
+} from "@/lib/agent/voiceTurnStore";
 import { requireClassMember, requireUser } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {

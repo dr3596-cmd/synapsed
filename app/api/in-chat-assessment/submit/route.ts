@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { invokeAgent } from '@/lib/agent/simple-agent';
-import { ConversationService } from '@/lib/agent/conversation-service';
+import { invokeAgent } from '@/lib/agent/tutorAgent';
+import { ConversationService } from '@/lib/agent/conversationService';
 
 type AnswerValue = string | number | boolean | string[];
 type FieldMeta = { name: string; label: string; type?: string };

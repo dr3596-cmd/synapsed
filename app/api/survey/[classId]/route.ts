@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
-import { stripAnswerKeys } from "@/lib/survey/diagnostic";
+import { stripAnswerKeys } from "@/lib/surveys/diagnostic";
 import { NextRequest, NextResponse } from "next/server";
 import { requireClassMember } from "@/lib/auth";
 

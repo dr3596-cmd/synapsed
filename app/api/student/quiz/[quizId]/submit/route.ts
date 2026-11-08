@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { QuizSubmitRequest, QuizSubmitResponse } from '@/lib/types/quizzes';
-import { autoGrade, computeScore, isChoiceQuestion } from '@/lib/quizGrading';
+import { autoGrade, computeScore, isChoiceQuestion } from '@/lib/quizzes/grading';
 
 // POST: Submit quiz answers
 export async function POST(

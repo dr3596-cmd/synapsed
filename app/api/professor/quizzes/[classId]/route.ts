@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { CreateQuizRequest } from '@/lib/types/quizzes';
-import { saveQuizQuestions } from '@/lib/quizGrading';
+import { saveQuizQuestions } from '@/lib/quizzes/grading';
 
 // GET: List all quizzes for a class
 export async function GET(

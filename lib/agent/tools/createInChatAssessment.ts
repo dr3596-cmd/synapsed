@@ -1,8 +1,8 @@
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import * as z from "zod";
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 import { prisma } from "@/lib/db/prisma";
-import { GEMINI_MODEL } from "@/lib/gemini-model";
+import { GEMINI_MODEL, gemini } from "@/lib/ai/gemini";
 
 export const createInChatAssessment = new DynamicStructuredTool({
   name: "createInChatAssessment",
@@ -28,7 +28,6 @@ export const createInChatAssessment = new DynamicStructuredTool({
     };
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
       // Define function declaration for assessment generation
       const generateAssessmentFunction = {
@@ -242,7 +241,7 @@ Return correctAnswers as an array of objects, one per field:
 
 Return the assessment structure by calling the function \`create_in_chat_assessment\` with the fields and correctAnswers arrays.`;
 
-      const response = await ai.models.generateContent({
+      const response = await gemini.models.generateContent({
         model: GEMINI_MODEL,
         contents: prompt,
         config: {

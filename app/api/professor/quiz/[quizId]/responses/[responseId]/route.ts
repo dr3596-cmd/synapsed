@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { computeScore, recalculateResponseScore } from '@/lib/quizGrading';
+import { computeScore, recalculateResponseScore } from '@/lib/quizzes/grading';
 
 /**
  * PATCH: Professor grades a student's quiz submission.

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { uploadQuizImageToR2 } from '@/lib/r2/uploadQuizImage';
+import { uploadQuizImageToR2 } from '@/lib/storage/uploadQuizImage';
 
 function bufferFromFile(file: File): Promise<Buffer> {
   return new Response(file.stream()).arrayBuffer().then(buf => Buffer.from(buf));

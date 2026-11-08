@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Question, AnswerOption } from './types';
-import { RichTextEditor } from '@/components/richtext/RichTextEditor';
+import { RichTextEditor } from '@/components/rich-text/RichTextEditor';
 import { X, Plus, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import { RichTextContent } from '@/lib/types/quizzes';
 

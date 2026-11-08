@@ -60,7 +60,7 @@ Agent edit points also listed in [`../AGENT_QUICKSTART.md`](../AGENT_QUICKSTART.
 
 `components/teacher/class/` powers `/teacher/classes/[id]` tabs:
 
-- `NewSurveyManagement.tsx`, `SurveyEditor.tsx`, `StudentProgressTable.tsx`
+- `SurveyManagement.tsx`, `SurveyEditor.tsx`, `StudentProgressTable.tsx`
 - `contentmanagement/` — materials
 - `studentManagement.tsx`
 - `ClassAssessmentsManagement.tsx`

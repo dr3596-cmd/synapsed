@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
-import { getStudentFeedback } from "@/lib/feedback";
+import { getStudentFeedback } from "@/lib/students/feedback";
 
 // GET: all feedback for the signed-in student, grouped by class
 export async function GET() {

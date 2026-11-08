@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ConversationService } from '@/lib/agent/conversation-service';
+import { ConversationService } from '@/lib/agent/conversationService';
 import { requireUser } from '@/lib/auth';
 
 // Conversations always belong to the signed-in user; any userId sent by the client is ignored.

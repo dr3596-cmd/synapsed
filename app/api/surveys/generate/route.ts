@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSyllabusContext, getClassInfo } from "@/lib/survey/syllabusService";
-import { generateDiagnosticSurvey } from "@/lib/survey/diagnostic";
+import { getSyllabusContext, getClassInfo } from "@/lib/surveys/syllabusService";
+import { generateDiagnosticSurvey } from "@/lib/surveys/diagnostic";
 import { NoCourseMaterialError } from "@/lib/course/topicMap";
 import { prisma } from "@/lib/db/prisma";
 import { requireClassProfessor } from "@/lib/auth";

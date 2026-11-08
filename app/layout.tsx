@@ -4,7 +4,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/components/themeProvider"
+import { ThemeProvider } from "@/components/providers/ThemeProvider"
 import { SessionProvider } from "@/lib/auth/client"
 import { Toaster } from "@/components/ui/sonner"
 

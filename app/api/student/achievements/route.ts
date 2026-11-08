@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
-import { getStudentAchievements } from "@/lib/achievements";
+import { getStudentAchievements } from "@/lib/students/achievements";
 
 // GET: achievement percentages for the signed-in student
 export async function GET() {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { callOpenAI, callClaude, callGemini } from './helpers';
+import { callOpenAI, callClaude, callGemini } from '@/lib/editor/models';
 import { requireUser } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {

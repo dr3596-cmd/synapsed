@@ -1,11 +1,9 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 import { prisma } from "@/lib/db/prisma";
-import { GEMINI_MODEL } from "@/lib/gemini-model";
-import { getOcrMarkdown } from "@/lib/ocr/getOcrMardown";
-import { getSyllabusContext } from "@/lib/survey/syllabusService";
+import { GEMINI_MODEL, gemini } from "@/lib/ai/gemini";
+import { ocrFromUrl } from "@/lib/ai/mistral";
+import { getSyllabusContext } from "@/lib/surveys/syllabusService";
 import type { CourseTopic } from "./types";
-
-const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
 const MAX_CHARS_PER_DOC = 12_000;
 const MAX_CONTENT_CHARS = 60_000;
@@ -27,7 +25,7 @@ async function getMaterialText(material: {
 }): Promise<{ text: string; error?: string }> {
   if (material.extractedText) return { text: material.extractedText };
   try {
-    const pages = await getOcrMarkdown(material.url);
+    const pages = await ocrFromUrl(material.url);
     const text = pages.map((p) => `--- Slide/Page ${p.page} ---\n${p.markdown}`).join("\n\n");
     await prisma.classMaterial.update({ where: { id: material.id }, data: { extractedText: text } });
     return { text };
@@ -130,7 +128,7 @@ For each topic give: a stable short id, a title, a 1-2 sentence summary, 3-6 key
 and the ids of topics that should be understood first (prerequisites, only ids from your own list).
 Order topics in the sequence the course teaches them. Call define_course_topics.`;
 
-  const response = await geminiClient.models.generateContent({
+  const response = await gemini.models.generateContent({
     model: GEMINI_MODEL,
     contents: prompt,
     config: {

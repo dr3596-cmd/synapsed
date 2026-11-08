@@ -3,15 +3,15 @@
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 // import type { PartialBlock } from '@blocknote/core';
-// import Editor from '@/components/Lesson/AiLesson/Editor';
-import AiLessonLayout from '@/components/Lesson/AiLesson/AiLessonLayout';
+// import Editor from '@/components/lesson/tutor/NotesEditor';
+import AiLessonLayout from '@/components/lesson/tutor/AiLessonLayout';
 import { Button } from '@/components/ui/button';
 import { Sparkles, BookOpen, ArrowLeft, ChevronUp, ChevronDown, CheckCircle2, Lock } from 'lucide-react';
 import { toast } from 'sonner';
-import type { LessonAccess } from '@/lib/pathwayProgress';
-//import { FlashcardsPanel } from '@/components/Lesson/flashcard/FlashcardsPanel';
-import ContentPage from '@/components/Lesson/contentPage/ContentPage';
-import { LessonNoteProvider } from '@/lib/context/LessonNoteContext';
+import type { LessonAccess } from '@/lib/pathways/progress';
+//import { FlashcardsPanel } from '@/components/lesson/flashcards/FlashcardsPanel';
+import ContentPage from '@/components/lesson/content/ContentPage';
+import { LessonNoteProvider } from '@/components/lesson/LessonNoteContext';
 
 export default function LessonPage() {
 

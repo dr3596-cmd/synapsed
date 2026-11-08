@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireClassProfessor } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
-import { getStudentFeedback } from "@/lib/feedback";
+import { getStudentFeedback } from "@/lib/students/feedback";
 
 type Params = { params: Promise<{ classId: string; studentId: string }> };
 

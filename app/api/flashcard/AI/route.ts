@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
-import { requestAiFlashcards } from '@/lib/flashcard/generate';
+import { requestAiFlashcards } from '@/lib/flashcards/generate';
 
 // POST { nodeTitle, markdownContent }: raw AI flashcards for a lesson, as a JSON string in `content`
 export async function POST(request: NextRequest) {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
-import { getLessonAccess } from "@/lib/pathwayProgress";
+import { getLessonAccess } from "@/lib/pathways/progress";
 
 /**
  * Lesson access and completion for a pathway node, scoped to the signed-in student's own pathway.

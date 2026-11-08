@@ -1,10 +1,10 @@
 'use client'
-import { StudentManagement } from "@/components/teacher/class/studentManagement"
-import ContentManagement from "@/components/teacher/class/contentmanagement/contentManagement"
+import { StudentManagement } from "@/components/teacher/class/StudentManagement"
+import ContentManagement from "@/components/teacher/class/content/ContentManagement"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
-import { NewSurveyManagement } from "@/components/teacher/class/NewSurveyManagement"
+import { ClassPageLayout } from "@/components/teacher/class/ClassPageLayout"
+import { SurveyManagement } from "@/components/teacher/class/surveys/SurveyManagement"
 import { ClassAssessmentsManagement } from "@/components/teacher/class/ClassAssessmentsManagement"
 import ClassInfoSettings from "@/components/teacher/class/ClassInfoSettings"
 import { ClassAnalytics } from "@/components/teacher/class/ClassAnalytics"
@@ -42,7 +42,7 @@ export default function Page() {
       case "content-management":
         return <ContentManagement classId={classId} />
       case "survey-learning-path":
-        return <NewSurveyManagement classId={classId} />
+        return <SurveyManagement classId={classId} />
       case "quizzes-assessments":
         return <ClassAssessmentsManagement classId={classId} />
       case "analytics":
@@ -53,8 +53,8 @@ export default function Page() {
   }
 
   return (
-    <TeacherDashboard activeSection={activeSection} setActiveSection={handleSectionChange}>
+    <ClassPageLayout activeSection={activeSection} setActiveSection={handleSectionChange}>
       {renderContent()}
-    </TeacherDashboard>
+    </ClassPageLayout>
   )
 }

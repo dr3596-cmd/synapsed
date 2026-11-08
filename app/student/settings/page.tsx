@@ -3,7 +3,7 @@
 import Link from "next/link";
 import useSWR from "swr";
 import { signOutToSignIn, useSession } from "@/lib/auth/client";
-import Sidebar from "@/components/student/StudentSideBar";
+import Sidebar from "@/components/student/StudentSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

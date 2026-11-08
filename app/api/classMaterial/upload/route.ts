@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { uploadToR2 } from "@/lib/r2/uploadtoR2";
+import { uploadToR2 } from "@/lib/storage/uploadToR2";
 import { prisma } from "@/lib/db/prisma";
-import { vectorizeAndUpdate } from "@/lib/vectorization";
+import { vectorizeAndUpdate } from "@/lib/rag/vectorizeMaterial";
 import { isStudyServiceRequest, requireClassProfessor } from "@/lib/auth";
 import { extractSyllabus } from "@/lib/syllabus/extractSyllabus";
 

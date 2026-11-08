@@ -7,9 +7,9 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from '@/lib/auth/client';
-import { ClassTabs } from '@/components/student/ClassTabs';
+import { ClassTabs } from '@/components/student/dashboard/ClassTabs';
 
-const SynapsedFlow = dynamic(() => import('@/components/Synapses/Pathway/PathwayDisplay'), {
+const SynapsedFlow = dynamic(() => import('@/components/pathway/PathwayDisplay'), {
   ssr: false,
   loading: () => null,
 });

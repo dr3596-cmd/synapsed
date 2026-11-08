@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth';
-import { uploadToMistral } from '@/lib/rag/UploadToMistral';
-import { getOcrMarkdown } from '@/lib/rag/ragGetMarkdown';
-import { GoogleGenAI } from '@google/genai';
+import { ocrFromFile } from '@/lib/ai/mistral';
 import { Type } from '@google/genai';
 import { OCRQuestion, OCRResponse } from '@/lib/types/quizzes';
-import { GEMINI_MODEL } from '@/lib/gemini-model';
-
-const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+import { GEMINI_MODEL, gemini } from '@/lib/ai/gemini';
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,8 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 1: Upload to Mistral for OCR processing
-    const uploadRes = await uploadToMistral(file);
-    const ocrPages = await getOcrMarkdown(uploadRes.id);
+    const ocrPages = await ocrFromFile(file);
 
     // Step 2: Combine all pages into single text
     const fullText = ocrPages
@@ -87,7 +82,7 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    const aiResponse = await geminiClient.models.generateContent({
+    const aiResponse = await gemini.models.generateContent({
       model: GEMINI_MODEL,
       contents: `Extract all quiz questions from this OCR text. Identify question types (multiple-choice, short-answer, true-false) and extract answer options with correct answers marked.
 

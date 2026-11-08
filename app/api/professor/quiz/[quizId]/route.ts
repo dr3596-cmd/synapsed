@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { regradeQuiz, saveQuizQuestions } from '@/lib/quizGrading';
+import { regradeQuiz, saveQuizQuestions } from '@/lib/quizzes/grading';
 
 // GET: Get a single quiz
 export async function GET(

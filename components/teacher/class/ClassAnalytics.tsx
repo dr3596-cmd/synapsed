@@ -8,9 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DashboardMetrics } from "@/components/teacher/assessments/DashboardMetrics"
 import { StudentAssessmentList } from "@/components/teacher/assessments/StudentAssessmentList"
-import { StudentFeedbackDialog } from "./Dialogs/StudentFeedbackDialog"
+import { StudentFeedbackDialog } from "@/components/teacher/class/dialogs/StudentFeedbackDialog"
 import type { Quiz } from "@/components/teacher/assessments/types"
-import type { ClassAnalytics as ClassAnalyticsData, EngagementStatus, RiskFlag, StudentAnalytics } from "@/lib/analytics"
+import type { ClassAnalytics as ClassAnalyticsData, EngagementStatus, RiskFlag, StudentAnalytics } from "@/lib/analytics/classAnalytics"
 
 const fetcher = async (url: string) => {
   const res = await fetch(url)
