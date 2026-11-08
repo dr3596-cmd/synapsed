@@ -1,6 +1,6 @@
 # Synapsed Agent - Quick Start
 
-**Hub:** [README.md](./README.md) · **Architecture:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) · **Canonical agent docs:** [lib/agent/README.md](./lib/agent/README.md)
+**Hub:** [README.md](../../README.md) · **Architecture:** [docs/ARCHITECTURE.md](../ARCHITECTURE.md) · **Canonical agent docs:** [lib/agent/README.md](../../lib/agent/README.md)
 
 ## Current State
 
@@ -10,12 +10,12 @@ Synapsed now runs a **single-memory multimodal agent**:
 - visual Excalidraw generation
 - realtime voice interaction
 
-All modalities share the same `threadId` and the same tutor policy in `lib/agent/simple-agent.ts`.
+All modalities share the same `threadId` and the same tutor policy in `lib/agent/tutorAgent.ts`.
 
 ## Fast Mental Model
 
 - **Realtime handles transport** (audio input/output, turn events)
-- **`simple-agent` handles reasoning** (memory, tools, pedagogy)
+- **`tutorAgent` handles reasoning** (memory, tools, pedagogy)
 - **ConversationService handles persistence** (user/assistant turns)
 
 This avoids dual-brain drift and keeps behavior consistent.
@@ -68,7 +68,7 @@ Returns:
 
 ## Tooling
 
-Registered tools in `simple-agent.ts` include:
+Registered tools in `tutorAgent.ts` include:
 
 - `searchClassContent`
 - `createInChatAssessment`
@@ -79,16 +79,16 @@ Registered tools in `simple-agent.ts` include:
 ## Reliability Behaviors
 
 - Voice turn idempotency via required `turnId`
-- Retry dedupe cache in `lib/agent/voice-turn-store.ts`
+- Retry dedupe cache in `lib/agent/voiceTurnStore.ts`
 - Realtime barge-in: active assistant speech is canceled when user starts speaking
 
 ## Where To Edit
 
-- Core policy + tool orchestration: `lib/agent/simple-agent.ts`
+- Core policy + tool orchestration: `lib/agent/tutorAgent.ts`
 - Prompts (main + visual + audio): `lib/agent/prompts.ts`
 - Visual generation tool: `lib/agent/tools/createVisualLesson.ts`
-- Voice UI overlay: `components/Lesson/AiLesson/VoiceMode.tsx`
-- Chat integration: `components/Lesson/AiLesson/ChatSection.tsx`
+- Voice UI overlay: `components/lesson/tutor/VoiceMode.tsx`
+- Chat integration: `components/lesson/tutor/ChatSection.tsx`
 
 ## Run
 

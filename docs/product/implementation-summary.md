@@ -37,7 +37,7 @@ I've successfully implemented the complete survey and learning path management s
 
 ### 3. Frontend Components
 
-#### NewSurveyManagement Component
+#### SurveyManagement Component
 - ✅ Survey list dashboard with status badges
 - ✅ Create manually or generate with AI
 - ✅ Duplicate, publish, archive, and delete actions
@@ -81,12 +81,12 @@ app/api/surveys/[id]/questions/duplicate/route.ts
 app/api/surveys/[id]/questions/reorder/route.ts
 app/api/learning-paths/generate/route.ts
 app/api/learning-paths/[id]/regenerate/route.ts
-components/teacher/class/NewSurveyManagement.tsx
-components/teacher/class/SurveyEditor.tsx
+components/teacher/class/surveys/SurveyManagement.tsx
+components/teacher/class/surveys/SurveyEditor.tsx
 components/teacher/class/StudentProgressTable.tsx
 components/ui/checkbox.tsx
-SURVEY_SYSTEM_README.md
-IMPLEMENTATION_SUMMARY.md
+docs/features/survey-system.md
+docs/product/implementation-summary.md
 ```
 
 ### Modified Files
@@ -108,7 +108,7 @@ import { SurveyLearningPath } from "@/components/teacher/class/surveyManagement"
 With:
 
 ```tsx
-import { NewSurveyManagement } from "@/components/teacher/class/NewSurveyManagement"
+import { SurveyManagement } from "@/components/teacher/class/surveys/SurveyManagement"
 ```
 
 And replace the component usage:
@@ -118,7 +118,7 @@ And replace the component usage:
 <SurveyLearningPath classId={classId} />
 
 // New
-<NewSurveyManagement classId={classId} />
+<SurveyManagement classId={classId} />
 ```
 
 ### Step 2: Database Migration (IMPORTANT!)
@@ -268,13 +268,13 @@ If you have existing surveys and responses, you may need to migrate them:
 ## 📚 Documentation
 
 Comprehensive documentation is available in:
-- **SURVEY_SYSTEM_README.md** - Full API documentation, schema details, and troubleshooting
+- **docs/features/survey-system.md** - Full API documentation, schema details, and troubleshooting
 
 ## 🤝 Questions?
 
 If you encounter issues:
 1. Check the console for error messages
-2. Review SURVEY_SYSTEM_README.md
+2. Review docs/features/survey-system.md
 3. Check that database migrations were applied
 4. Verify API endpoints are accessible
 5. Check that Gemini API key is configured for AI generation

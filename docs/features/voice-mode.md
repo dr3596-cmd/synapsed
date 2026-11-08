@@ -9,9 +9,9 @@ sequenceDiagram
     participant SESSION as POST /api/session
     participant OAI as OpenAI Realtime (gpt-realtime-2)
     participant VT as POST /api/voice-turn
-    participant CACHE as voice-turn-store
+    participant CACHE as voiceTurnStore
     participant CONV as ConversationService
-    participant SA as simple-agent (LangGraph)
+    participant SA as tutorAgent (LangGraph)
 
     Note over VM: Component mounts → connect()
 
@@ -142,7 +142,7 @@ flowchart TD
     CHK -->|Yes — duplicate request| HIT[Return cached response\nTTL: 5 minutes]
     CHK -->|No| AG
 
-    subgraph AG [simple-agent — same agent as text chat]
+    subgraph AG [tutorAgent — same agent as text chat]
         A1[Load full conversation history\nfrom MongoDB thread memory]
         A2[Gemini processes the transcript\nwith full context]
         A3{Tool needed?}

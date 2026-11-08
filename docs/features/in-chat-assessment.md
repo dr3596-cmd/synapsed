@@ -31,9 +31,9 @@ npx shadcn@latest add https://formedible.dev/r/use-formedible.json --yes
 - Installs required dependencies (TanStack Form, Zod, etc.)
 
 **Files Created:**
-- `hooks/use-formedible.tsx`
-- `components/formedible/fields/*` (all field components)
-- `lib/formedible/types.ts`
+- `hooks/useFormedible.tsx`
+- `components/forms/fields/*` (all field components)
+- `lib/forms/types.ts`
 
 ---
 
@@ -151,7 +151,7 @@ npx prisma migrate dev --name add_in_chat_assessments
 
 ### Step 4: Integrate Tool into Agent
 
-**File:** `lib/agent/simple-agent.ts`
+**File:** `lib/agent/tutorAgent.ts`
 
 **Changes Made:**
 
@@ -186,7 +186,7 @@ npx prisma migrate dev --name add_in_chat_assessments
 
 ### Step 5: Create Assessment Form Component
 
-**File:** `components/Lesson/AiLesson/InChatAssessmentForm.tsx`
+**File:** `components/lesson/tutor/InChatAssessmentForm.tsx`
 
 **Features:**
 
@@ -267,7 +267,7 @@ POST /api/in-chat-assessment/manual-trigger
 
 ### Step 7: Integrate into Chat Section
 
-**File:** `components/Lesson/AiLesson/ChatSection.tsx`
+**File:** `components/lesson/tutor/ChatSection.tsx`
 
 **Changes Made:**
 
@@ -536,11 +536,11 @@ const avgScore = await prisma.inChatAssessmentResponse.aggregate({
 | File | Purpose |
 |------|---------|
 | `lib/agent/tools/createInChatAssessment.ts` | Tool that generates assessments |
-| `components/Lesson/AiLesson/InChatAssessmentForm.tsx` | Form rendering component |
+| `components/lesson/tutor/InChatAssessmentForm.tsx` | Form rendering component |
 | `app/api/in-chat-assessment/submit/route.ts` | Form submission endpoint |
 | `app/api/in-chat-assessment/manual-trigger/route.ts` | Manual trigger endpoint |
-| `components/Lesson/AiLesson/ChatSection.tsx` | Chat integration |
-| `lib/agent/simple-agent.ts` | Agent system integration |
+| `components/lesson/tutor/ChatSection.tsx` | Chat integration |
+| `lib/agent/tutorAgent.ts` | Agent system integration |
 | `prisma/schema.prisma` | Database models |
 
 ---

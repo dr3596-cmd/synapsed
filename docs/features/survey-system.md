@@ -280,15 +280,15 @@ Approves or rejects a pathway.
 
 ### Using the New Survey Management Component
 
-Replace the old `SurveyLearningPath` component with `NewSurveyManagement`:
+Replace the old `SurveyLearningPath` component with `SurveyManagement`:
 
 ```tsx
-import { NewSurveyManagement } from "@/components/teacher/class/NewSurveyManagement"
+import { SurveyManagement } from "@/components/teacher/class/surveys/SurveyManagement"
 
 export default function ClassPage({ params }: { params: { classId: string } }) {
   return (
     <div>
-      <NewSurveyManagement classId={params.classId} />
+      <SurveyManagement classId={params.classId} />
     </div>
   )
 }
@@ -340,7 +340,7 @@ npx prisma generate
 ```
 
 2. **Update Existing Code**:
-   - Replace `SurveyLearningPath` with `NewSurveyManagement` in class pages
+   - Replace `SurveyLearningPath` with `SurveyManagement` in class pages
    - Update any direct API calls to use new endpoints
    - Update student survey submission to include `surveyId`
 

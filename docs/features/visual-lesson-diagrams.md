@@ -8,7 +8,7 @@ sequenceDiagram
     participant UI as ChatSection
     participant API as POST /api/agent-chat
     participant CONV as ConversationService
-    participant SA as simple-agent (LangGraph)
+    participant SA as tutorAgent (LangGraph)
     participant HIST as diagramHistoryByThread
     participant VL as createVisualLesson
     participant HAIKU as Claude Haiku (Planner)

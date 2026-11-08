@@ -1,4 +1,4 @@
-# `components/Synapses/` — Pathway graph UI
+# `components/pathway/` — Pathway graph UI
 
 React Flow visualization of personalized learning pathways.
 
@@ -16,4 +16,4 @@ Parent: [`../README.md`](../README.md) · Student route: `/class/[classId]/pathw
 | `store.ts` | Zustand client state |
 | `Pathway.css` | Graph-specific styles |
 
-Data comes from pathway APIs (`/api/pathway/*`) and Prisma `LearningPathway` / `PathwayNode`. Generation rules: `lib/learning-paths` + `study/data/prompts/pathway_generation_spec.json`.
+Data comes from pathway APIs (`/api/pathway/*`) and Prisma `LearningPathway` / `PathwayNode`. Generation rules: `lib/pathways` + `study/data/prompts/pathway_generation_spec.json`.

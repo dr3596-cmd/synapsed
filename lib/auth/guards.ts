@@ -1,6 +1,6 @@
-// Ownership and membership checks for classes and quizzes. Built on
+// Ownership and membership checks for classes, surveys and pathway nodes. Built on
 // session.ts; each guard returns the same `{ ok, ... }` shape.
-import type { Class, LearningPathway, PathwayNode, ProfessorQuiz } from "@prisma/client";
+import type { Class, LearningPathway, PathwayNode } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import {
   type AuthResult,
@@ -70,22 +70,6 @@ export async function requireStudentOrClassProfessor(
   if (!result.ok) return result;
   if (result.user.id === studentId) return result;
   return requireClassProfessor(classId);
-}
-
-/** The user created this quiz (or is an admin). */
-export async function requireQuizOwner(
-  quizId: string,
-): Promise<AuthResult<{ quiz: ProfessorQuiz }>> {
-  const result = await requireUser();
-  if (!result.ok) return result;
-  const { user } = result;
-
-  const quiz = await prisma.professorQuiz.findUnique({ where: { id: quizId } });
-  if (!quiz) return { ok: false, response: notFound("Quiz not found") };
-  if (quiz.professorId !== user.id && !isAdmin(user)) {
-    return { ok: false, response: forbidden() };
-  }
-  return { ok: true, user, quiz };
 }
 
 /** The user teaches the class this survey belongs to (or is an admin). */
