@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const ACTIVE_WITHIN_DAYS = 7;

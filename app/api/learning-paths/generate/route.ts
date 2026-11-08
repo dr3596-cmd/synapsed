@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { generatePathwayForStudent } from "@/lib/learning-paths/generatePathway";
 import { getOrBuildTopicMap, NoCourseMaterialError } from "@/lib/course/topicMap";
+import { isStudyServiceRequest, requireClassProfessor } from "@/lib/auth";
 
 // POST /api/learning-paths/generate - Generate learning paths
 export async function POST(req: NextRequest) {
@@ -38,6 +39,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!isStudyServiceRequest(req)) {
+      const authResult = await requireClassProfessor(classId);
+      if (!authResult.ok) return authResult.response;
+    }
+
     // Get survey with responses
     const survey = await prisma.survey.findUnique({
       where: { id: surveyId },
@@ -52,7 +58,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (!survey) {
+    if (!survey || survey.classId !== classId) {
       return NextResponse.json({ error: "Survey not found" }, { status: 404 });
     }
 

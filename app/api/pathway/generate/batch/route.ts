@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { generatePathwayForStudent } from "@/lib/learning-paths/generatePathway";
 import { getOrBuildTopicMap, NoCourseMaterialError } from "@/lib/course/topicMap";
+import { requireClassProfessor } from "@/lib/auth";
 
 // Generates a pathway for every student who answered the class's active survey.
 export async function POST(req: Request) {
   const { classId } = await req.json();
   if (!classId) return NextResponse.json({ error: "Missing classId" }, { status: 400 });
+
+  const authResult = await requireClassProfessor(classId);
+  if (!authResult.ok) return authResult.response;
 
   const survey = await prisma.survey.findFirst({
     where: { classId, status: "ACTIVE" },

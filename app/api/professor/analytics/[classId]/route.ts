@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/auth";
+import { prisma } from "@/lib/db/prisma";
 import { getClassAnalytics } from "@/lib/analytics";
 
 // GET: engagement, assessment, pathway and at-risk analytics for a class the professor teaches
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authResult = await requireUser();
+  if (!authResult.ok) return authResult.response;
+  const { user } = authResult;
 
   const { classId } = await params;
   if (!/^[a-f0-9]{24}$/i.test(classId)) {
@@ -16,7 +15,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ cla
   }
 
   const cls = await prisma.class.findUnique({ where: { id: classId }, select: { professorId: true } });
-  if (!cls || cls.professorId !== session.user.id) {
+  if (!cls || cls.professorId !== user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

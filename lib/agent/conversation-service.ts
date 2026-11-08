@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db/prisma';
 import { MessageRole, Prisma } from '@prisma/client';
 import type { SourceMetadata } from './simple-agent';
 

@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { getStudentAchievements, type ProgressCount } from "@/lib/achievements";
 
 export interface PopQuizFeedback {

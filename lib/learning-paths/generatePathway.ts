@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { GEMINI_MODEL } from "@/lib/gemini-model";
 import { getOrBuildTopicMap } from "@/lib/course/topicMap";
 import { computeMastery } from "@/lib/course/mastery";

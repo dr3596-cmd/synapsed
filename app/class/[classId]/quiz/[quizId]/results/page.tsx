@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/client";
 import { useEffect, useState } from "react";
 import { QuizResultsView } from "@/components/student/QuizResultsView";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

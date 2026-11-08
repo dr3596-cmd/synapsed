@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import ReactMarkdown from "react-markdown";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/client";
 import { ArrowRight, ChevronDown, ClipboardCheck, MessageSquare, Sparkles } from "lucide-react";
 import Sidebar from "@/components/student/StudentSideBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

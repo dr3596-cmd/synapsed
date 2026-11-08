@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/client";
 import { QuizView } from "@/components/assessments/QuizView";
 import { useRouter } from "next/navigation";
 

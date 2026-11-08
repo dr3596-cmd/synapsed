@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { prisma } from '@/lib/prisma';
+import { requireUser } from '@/lib/auth';
+import { prisma } from '@/lib/db/prisma';
 import { invokeAgent } from '@/lib/agent/simple-agent';
 import { ConversationService } from '@/lib/agent/conversation-service';
 
@@ -59,11 +59,10 @@ function scoreAnswers(
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    const userId = session.user.id;
+    const authResult = await requireUser();
+    if (!authResult.ok) return authResult.response;
+    const { user } = authResult;
+    const userId = user.id;
 
     const body = await request.json();
     const { assessmentId, responses } = body as { assessmentId?: string; responses?: Record<string, unknown> };

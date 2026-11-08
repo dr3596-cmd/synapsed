@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireUser } from '@/lib/auth';
 import { invokeAgent } from '@/lib/agent/simple-agent';
 import { ConversationService } from '@/lib/agent/conversation-service';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    const userId = session.user.id;
+    const authResult = await requireUser();
+    if (!authResult.ok) return authResult.response;
+    const { user } = authResult;
+    const userId = user.id;
 
     const body = await request.json();
     const { topic, nodeTitle, classId, lessonId } = body;

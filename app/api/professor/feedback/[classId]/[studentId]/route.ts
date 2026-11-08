@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireClassProfessor } from "@/lib/auth";
+import { prisma } from "@/lib/db/prisma";
 import { getStudentFeedback } from "@/lib/feedback";
 
 type Params = { params: Promise<{ classId: string; studentId: string }> };
@@ -10,29 +10,21 @@ const MAX_MESSAGE_LENGTH = 5000;
 
 /** The signed-in user must teach this class and the student must be enrolled in it. */
 async function authorize(classId: string, studentId: string) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
-  }
   if (!OBJECT_ID.test(classId) || !OBJECT_ID.test(studentId)) {
     return { error: NextResponse.json({ error: "Not found" }, { status: 404 }) };
   }
+  const authResult = await requireClassProfessor(classId);
+  if (!authResult.ok) return { error: authResult.response };
 
-  const [cls, enrollment] = await Promise.all([
-    prisma.class.findUnique({ where: { id: classId }, select: { professorId: true } }),
-    prisma.classEnrollment.findUnique({
-      where: { studentId_classId: { studentId, classId } },
-      select: { student: { select: { id: true, name: true, email: true } } },
-    }),
-  ]);
-  if (!cls || cls.professorId !== session.user.id) {
-    return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
-  }
+  const enrollment = await prisma.classEnrollment.findUnique({
+    where: { studentId_classId: { studentId, classId } },
+    select: { student: { select: { id: true, name: true, email: true } } },
+  });
   if (!enrollment) {
     return { error: NextResponse.json({ error: "Student is not enrolled in this class" }, { status: 404 }) };
   }
 
-  return { professorId: session.user.id, student: enrollment.student };
+  return { professorId: authResult.user.id, student: enrollment.student };
 }
 
 // GET: the student's progress and feedback in this class, for the professor writing feedback

@@ -1,5 +1,5 @@
 import { Prisma, type QuestionType } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import type { QuestionInput, QuestionOptionInput } from "@/lib/types/quizzes";
 
 export interface GradableOption {

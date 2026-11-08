@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import useSWR from "swr"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/lib/auth/client"
 import { toast } from "sonner"
 import { Copy, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"

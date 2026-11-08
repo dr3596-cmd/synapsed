@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { getOcrMarkdown } from "@/lib/ocr/getOcrMardown";
 import { chunkMarkdownByPage } from "@/lib/chunking/chunkMarkdown";
 import { embedAndStore } from "@/lib/pinecone/embedAndStore";

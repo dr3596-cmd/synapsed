@@ -1,10 +1,14 @@
 import { getOcrMarkdown } from '@/lib/ocr/getOcrMardown';
 import { embedAndStore } from '@/lib/pinecone/embedAndStore';
 import { chunkMarkdownByPage } from '@/lib/chunking/chunkMarkdown';
+import { requireRole } from '@/lib/auth';
 //This function was used to text the API endpoints and create the initial version of the Pathways. 
 // given that now we uploaded content on the cloud and returned the link. this is not needed anymore but will be kept just in case. 
 export async function POST(req: Request) {
     try {
+    const authResult = await requireRole("PROFESSOR");
+    if (!authResult.ok) return authResult.response;
+
       const formData = await req.formData();
       const file = formData.get('file') as File;
       if (!file) return Response.json({ error: 'No file provided' }, { status: 400 });

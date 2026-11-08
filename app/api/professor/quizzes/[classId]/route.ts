@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { prisma } from '@/lib/prisma';
+import { requireUser } from '@/lib/auth';
+import { prisma } from '@/lib/db/prisma';
 import { CreateQuizRequest } from '@/lib/types/quizzes';
 import { saveQuizQuestions } from '@/lib/quizGrading';
 
@@ -10,10 +10,9 @@ export async function GET(
   { params }: { params: Promise<{ classId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await requireUser();
+    if (!authResult.ok) return authResult.response;
+    const { user } = authResult;
 
     const { classId } = await params;
 
@@ -23,7 +22,7 @@ export async function GET(
       select: { professorId: true },
     });
 
-    if (!classRecord || classRecord.professorId !== session.user.id) {
+    if (!classRecord || classRecord.professorId !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -114,10 +113,9 @@ export async function POST(
   { params }: { params: Promise<{ classId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await requireUser();
+    if (!authResult.ok) return authResult.response;
+    const { user } = authResult;
 
     const { classId } = await params;
 
@@ -127,7 +125,7 @@ export async function POST(
       select: { professorId: true },
     });
 
-    if (!classRecord || classRecord.professorId !== session.user.id) {
+    if (!classRecord || classRecord.professorId !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -144,7 +142,7 @@ export async function POST(
         title: title.trim(),
         description: description?.trim() || null,
         classId,
-        professorId: session.user.id,
+        professorId: user.id,
         status: 'DRAFT',
       },
       select: { id: true },

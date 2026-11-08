@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import useSWR from "swr";
-import { signOut, useSession } from "next-auth/react";
+import { signOutToSignIn, useSession } from "@/lib/auth/client";
 import Sidebar from "@/components/student/StudentSideBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -53,7 +53,7 @@ function AccountCard() {
         </p>
         <Button
           variant="outline"
-          onClick={() => signOut({ callbackUrl: "/sign-in" })}
+          onClick={() => signOutToSignIn()}
           className="gap-2"
         >
           <LogOut className="h-4 w-4" />

@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { requireUser } from "@/lib/auth";
 import { getStudentAchievements } from "@/lib/achievements";
 
 // GET: achievement percentages for the signed-in student
 export async function GET() {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authResult = await requireUser();
+  if (!authResult.ok) return authResult.response;
+  const { user } = authResult;
 
   try {
-    const achievements = await getStudentAchievements(session.user.id);
+    const achievements = await getStudentAchievements(user.id);
     return NextResponse.json(achievements);
   } catch (error) {
     console.error("[STUDENT_ACHIEVEMENTS]", error);

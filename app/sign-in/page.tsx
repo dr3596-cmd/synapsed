@@ -1,19 +1,12 @@
 'use client';
 
 import { Suspense, useEffect } from 'react';
-import { useSession, signIn } from 'next-auth/react';
+import { CHOOSE_ROLE_PATH, HOME_BY_ROLE, signInWithGoogle, useSession } from '@/lib/auth/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FcGoogle } from "react-icons/fc";
-import { Role } from '@prisma/client';
 
 import { Button } from '@/components/ui/button';
 
-type UserWithRole = {
-  id: string;
-  email: string;
-  name?: string;
-  role?: Role;
-};
 // Kept across the first-login detour (sign in -> choose role -> sign in again).
 const RETURN_KEY = 'synapsed:returnTo';
 
@@ -51,14 +44,14 @@ function SignInContent() {
     //console.log('Session:', session);
     
     if (status === 'authenticated') {
-      const role = (session?.user as UserWithRole)?.role;
+      const role = session?.user?.role;
       //console.log('User role:', role);
 
       const returnTo = callbackUrl ?? readStoredReturnPath();
 
       if (!role) {
         //console.log('Redirecting to choose-role');
-        router.push('/choose-role');
+        router.push(CHOOSE_ROLE_PATH);
       } else if (returnTo) {
         try {
           sessionStorage.removeItem(RETURN_KEY);
@@ -66,12 +59,8 @@ function SignInContent() {
           // ignore
         }
         router.push(returnTo);
-      } else if (role === 'STUDENT') {
-        //console.log('Redirecting to student dashboard');
-        router.push('/student/dashboard');
       } else {
-        //console.log('Redirecting to teacher dashboard');
-        router.push('/teacher/dashboard');
+        router.push(HOME_BY_ROLE[role]);
       }
     }
   }, [session, status, router, callbackUrl]);
@@ -91,7 +80,7 @@ function SignInContent() {
         <p className="text-center text-gray-500 mb-6">Sign in to your SynapsEd account</p>
 
         <Button
-          onClick={() => signIn('google')}
+          onClick={() => signInWithGoogle()}
           className="w-full flex items-center justify-center  space-x-2 py-3"
           variant={'outline'}
         >

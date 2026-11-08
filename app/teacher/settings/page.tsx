@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import useSWR from "swr";
-import { signOut, useSession } from "next-auth/react";
+import { signOutToSignIn, useSession } from "@/lib/auth/client";
 import { LogOut } from "lucide-react";
 import Sidebar from "@/components/teacher/SideBar";
 import TopNav from "@/components/teacher/TopNav";
@@ -54,7 +54,7 @@ function AccountCard() {
         <p className="text-sm text-gray-500">
           Your name, email and photo come from your Google account. Change them in Google to update them here.
         </p>
-        <Button variant="outline" onClick={() => signOut({ callbackUrl: "/sign-in" })} className="gap-2">
+        <Button variant="outline" onClick={() => signOutToSignIn()} className="gap-2">
           <LogOut className="h-4 w-4" />
           Sign out
         </Button>

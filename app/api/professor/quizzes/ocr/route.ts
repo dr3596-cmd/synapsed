@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireRole } from '@/lib/auth';
 import { uploadToMistral } from '@/lib/rag/UploadToMistral';
 import { getOcrMarkdown } from '@/lib/rag/ragGetMarkdown';
 import { GoogleGenAI } from '@google/genai';
@@ -11,10 +11,8 @@ const geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await requireRole('PROFESSOR');
+    if (!authResult.ok) return authResult.response;
 
     const formData = await request.formData();
     const file = formData.get('file') as File;

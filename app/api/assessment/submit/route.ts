@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db/prisma';
 import { invokeAgent } from '@/lib/agent/simple-agent';
+import { requireUser } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireUser();
+    if (!authResult.ok) return authResult.response;
+    // Responses are recorded for the signed-in user; a userId in the body is ignored.
+    const userId = authResult.user.id;
+
     const body = await request.json();
     const {
       assessmentId,
@@ -12,12 +18,11 @@ export async function POST(request: NextRequest) {
       conversationId,
       classId,
       lessonId,
-      userId,
     } = body;
 
-    if (!inChatAssessmentData || !responses || !userId) {
+    if (!inChatAssessmentData || !responses) {
       return NextResponse.json(
-        { error: 'Missing required fields: inChatAssessmentData, responses, or userId' },
+        { error: 'Missing required fields: inChatAssessmentData or responses' },
         { status: 400 }
       );
     }

@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect, useCallback } from "react"
 import dynamic from "next/dynamic"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/lib/auth/client"
 import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"

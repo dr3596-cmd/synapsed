@@ -1,15 +1,21 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { computeMastery } from "@/lib/course/mastery";
 import type { CourseTopic } from "@/lib/course/types";
+import { requireEnrolledStudent, requireStudentOrClassProfessor } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { studentId, classId, surveyId, answers } = await req.json();
+    const { classId, surveyId, answers } = await req.json();
 
-    if (!studentId || !classId || !answers || !Array.isArray(answers)) {
+    if (!classId || !answers || !Array.isArray(answers)) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+
+    // Students submit their own answers; a studentId in the body is ignored.
+    const authResult = await requireEnrolledStudent(classId);
+    if (!authResult.ok) return authResult.response;
+    const studentId = authResult.user.id;
 
     // If surveyId not provided, find the active survey for this class
     let activeSurveyId = surveyId;
@@ -35,7 +41,7 @@ export async function POST(req: NextRequest) {
       where: { id: activeSurveyId }
     });
 
-    if (!survey || survey.status !== 'ACTIVE') {
+    if (!survey || survey.classId !== classId || survey.status !== 'ACTIVE') {
       return NextResponse.json({ 
         error: "This survey is not currently active" 
       }, { status: 400 });
@@ -117,6 +123,9 @@ export async function GET(req: NextRequest) {
     if (!studentId || !classId) {
       return NextResponse.json({ error: "Missing studentId or classId" }, { status: 400 });
     }
+
+    const authResult = await requireStudentOrClassProfessor(classId, studentId);
+    if (!authResult.ok) return authResult.response;
 
     // If surveyId not provided, find the active survey
     let activeSurveyId = surveyId;

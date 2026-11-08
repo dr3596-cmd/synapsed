@@ -1,7 +1,7 @@
 import Sidebar from "@/components/teacher/SideBar";
 import TopNav from "@/components/teacher/TopNav";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { prisma } from "@/lib/db/prisma";
+import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { Plus, Upload, Users, BookOpen } from "lucide-react";
 

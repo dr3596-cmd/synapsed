@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { incompletePrerequisites } from "@/lib/pathwayLocks";
 
 /** Minimum pop quiz score (best attempt) needed before a lesson can be marked complete. */

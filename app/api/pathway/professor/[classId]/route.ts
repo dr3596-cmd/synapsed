@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { generatePathwayForStudent } from "@/lib/learning-paths/generatePathway";
 import { NoCourseMaterialError } from "@/lib/course/topicMap";
+import { isStudyServiceRequest, requireClassProfessor } from "@/lib/auth";
+
+/** The class's professor, or the study pipeline's service key. */
+async function authorize(req: NextRequest, classId: string) {
+  if (isStudyServiceRequest(req)) return null;
+  const authResult = await requireClassProfessor(classId);
+  return authResult.ok ? null : authResult.response;
+}
 
 // GET: Fetch all pathways for a class with student info
 export async function GET(req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
   try {
     const { classId } = await params;
+    const denied = await authorize(req, classId);
+    if (denied) return denied;
 
     const pathways = await prisma.learningPathway.findMany({
       where: { classId },
@@ -60,12 +70,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
 }
 
 // PUT: Update pathway status (approve/reject)
-export async function PUT(req: NextRequest) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
   try {
+    const { classId } = await params;
+    const denied = await authorize(req, classId);
+    if (denied) return denied;
+
     const { pathwayId, status, professorNotes } = await req.json();
 
     if (!pathwayId || !status) {
       return NextResponse.json({ error: "Missing pathwayId or status" }, { status: 400 });
+    }
+
+    const pathway = await prisma.learningPathway.findFirst({
+      where: { id: pathwayId, classId },
+      select: { id: true },
+    });
+    if (!pathway) {
+      return NextResponse.json({ error: "Pathway not found in this class" }, { status: 404 });
     }
 
     if (!["approved", "rejected"].includes(status)) {
@@ -114,6 +136,8 @@ export async function PUT(req: NextRequest) {
 export async function POST(req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
   try {
     const { classId } = await params;
+    const denied = await authorize(req, classId);
+    if (denied) return denied;
     const { studentId, focusText } = await req.json();
 
     if (!studentId) {

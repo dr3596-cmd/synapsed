@@ -1,14 +1,16 @@
-
-
 // using Gemini cause it is cheaper and still really good. 
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import { GEMINI_MODEL } from '@/lib/gemini-model';
+import { requireUser } from '@/lib/auth';
 
 const genAI = new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY!});
 
 export async function POST(req: NextRequest) {
   try {
+    const authResult = await requireUser();
+    if (!authResult.ok) return authResult.response;
+
     const { messages } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {

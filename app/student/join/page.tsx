@@ -2,7 +2,7 @@
 import { Suspense, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/client";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function JoinClassForm() {

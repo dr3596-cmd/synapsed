@@ -3,9 +3,13 @@ import { uploadToMistral } from '@/lib/rag/UploadToMistral';
 import { getOcrMarkdown } from '@/lib/rag/ragGetMarkdown';
 import { chunkMarkdownByPage } from '@/lib/chunking/chunkMarkdown';
 import { embedAndStore } from '@/lib/pinecone/embedAndStore';
+import { requireRole } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireRole("PROFESSOR");
+    if (!authResult.ok) return authResult.response;
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -80,6 +84,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
+  const authResult = await requireRole("PROFESSOR");
+  if (!authResult.ok) return authResult.response;
+
   return NextResponse.json({
     message: 'RAG API endpoint',
     supportedFormats: ['PDF', 'JPEG', 'PNG'],

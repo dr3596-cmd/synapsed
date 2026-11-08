@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/auth";
+import { prisma } from "@/lib/db/prisma";
 import { getLessonAccess } from "@/lib/pathwayProgress";
 
 /**
@@ -11,13 +11,12 @@ import { getLessonAccess } from "@/lib/pathwayProgress";
  */
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ nodeId: string }> }) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authResult = await requireUser();
+  if (!authResult.ok) return authResult.response;
+  const { user } = authResult;
 
   const { nodeId } = await params;
-  const access = await getLessonAccess(nodeId, session.user.id);
+  const access = await getLessonAccess(nodeId, user.id);
   if (!access) {
     return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
   }
@@ -26,13 +25,12 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ nod
 }
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ nodeId: string }> }) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authResult = await requireUser();
+  if (!authResult.ok) return authResult.response;
+  const { user } = authResult;
 
   const { nodeId } = await params;
-  const access = await getLessonAccess(nodeId, session.user.id);
+  const access = await getLessonAccess(nodeId, user.id);
   if (!access) {
     return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
   }

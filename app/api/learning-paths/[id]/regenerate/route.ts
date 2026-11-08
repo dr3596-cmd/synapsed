@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { generatePathwayForStudent } from "@/lib/learning-paths/generatePathway";
 import { NoCourseMaterialError } from "@/lib/course/topicMap";
+import { isStudyServiceRequest, requireClassProfessor } from "@/lib/auth";
 
 // POST /api/learning-paths/[id]/regenerate - Regenerate a learning path
 export async function POST(
@@ -19,6 +20,10 @@ export async function POST(
     const existing = await prisma.learningPathway.findUnique({ where: { id: pathwayId } });
     if (!existing) {
       return NextResponse.json({ error: "Pathway not found" }, { status: 404 });
+    }
+    if (!isStudyServiceRequest(req)) {
+      const authResult = await requireClassProfessor(existing.classId);
+      if (!authResult.ok) return authResult.response;
     }
     if (!existing.surveyId) {
       return NextResponse.json({ error: "Pathway has no survey to regenerate from" }, { status: 400 });

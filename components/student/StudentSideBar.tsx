@@ -2,7 +2,7 @@
 
 import TeacherSidebar, { type SidebarItem } from "@/components/teacher/SideBar";
 import { Home, BookOpen, MessageSquare, Award, Settings } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/client";
 import { QuizNotifications } from "@/components/assessments/QuizNotifications";
 
 export default function StudentSidebar() {

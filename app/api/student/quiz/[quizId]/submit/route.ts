@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { prisma } from '@/lib/prisma';
+import { requireUser } from '@/lib/auth';
+import { prisma } from '@/lib/db/prisma';
 import { QuizSubmitRequest, QuizSubmitResponse } from '@/lib/types/quizzes';
 import { autoGrade, computeScore, isChoiceQuestion } from '@/lib/quizGrading';
 
@@ -10,16 +10,15 @@ export async function POST(
   { params }: { params: Promise<{ quizId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await requireUser();
+    if (!authResult.ok) return authResult.response;
+    const { user } = authResult;
 
     const { quizId } = await params;
     const body: QuizSubmitRequest = await request.json();
     const { classId, answers } = body;
     // Always submit as the signed-in student, never an id from the request body
-    const studentId = session.user.id;
+    const studentId = user.id;
 
     if (!classId || !answers || !Array.isArray(answers)) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

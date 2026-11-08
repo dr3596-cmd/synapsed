@@ -1,7 +1,8 @@
 // /api/survey/save/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
+import { requireClassProfessor } from "@/lib/auth";
 
 const SurveySchema = z.object({
   classId: z.string(),
@@ -39,6 +40,9 @@ export async function POST(req: Request) {
     if (!classId || !questions) {
       return NextResponse.json({ success: false, error: "Missing classId or questions" }, { status: 400 });
     }
+
+    const authResult = await requireClassProfessor(classId);
+    if (!authResult.ok) return authResult.response;
 
     // Find existing survey for this class
     const existingSurvey = await prisma.survey.findFirst({

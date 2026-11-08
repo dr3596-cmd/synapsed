@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
+import { requireClassMember, requireClassProfessor } from "@/lib/auth";
+import { extractSyllabus } from "@/lib/syllabus/extractSyllabus";
 
 export async function GET(req: Request) {
   try {
@@ -9,6 +11,9 @@ export async function GET(req: Request) {
     if (!classId) {
       return NextResponse.json({ error: "Missing classId" }, { status: 400 });
     }
+
+    const authResult = await requireClassMember(classId);
+    if (!authResult.ok) return authResult.response;
 
     // Get all processed syllabus materials for this class
     const syllabusMaterials = await prisma.classMaterial.findMany({
@@ -98,6 +103,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing classId" }, { status: 400 });
     }
 
+    const authResult = await requireClassProfessor(classId);
+    if (!authResult.ok) return authResult.response;
+
     // Find unprocessed syllabus materials
     const unprocessedMaterials = await prisma.classMaterial.findMany({
       where: {
@@ -119,16 +127,12 @@ export async function POST(req: Request) {
     const results = [];
     for (const material of unprocessedMaterials) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/syllabus/extract`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ materialId: material.id }),
-        });
-        
-        if (response.ok) {
+        const { status, body } = await extractSyllabus(material.id);
+
+        if (status < 400) {
           results.push({ id: material.id, title: material.title, success: true });
         } else {
-          results.push({ id: material.id, title: material.title, success: false, error: await response.text() });
+          results.push({ id: material.id, title: material.title, success: false, error: JSON.stringify(body) });
         }
       } catch (error) {
         results.push({ id: material.id, title: material.title, success: false, error: error instanceof Error ? error.message : String(error) });

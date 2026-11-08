@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { prisma } from '@/lib/prisma';
+import { requireUser } from '@/lib/auth';
+import { prisma } from '@/lib/db/prisma';
 import { computeScore, recalculateResponseScore } from '@/lib/quizGrading';
 
 /**
@@ -14,10 +14,9 @@ export async function PATCH(
   { params }: { params: Promise<{ quizId: string; responseId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await requireUser();
+    if (!authResult.ok) return authResult.response;
+    const { user } = authResult;
 
     const { quizId, responseId } = await params;
     const response = await prisma.professorQuizResponse.findUnique({
@@ -27,7 +26,7 @@ export async function PATCH(
     if (!response || response.quizId !== quizId) {
       return NextResponse.json({ error: 'Submission not found' }, { status: 404 });
     }
-    if (response.quiz.professorId !== session.user.id) {
+    if (response.quiz.professorId !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

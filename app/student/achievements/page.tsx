@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import useSWR from "swr";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/client";
 import { BookOpen, ClipboardCheck, GraduationCap, Trophy } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Sidebar from "@/components/student/StudentSideBar";

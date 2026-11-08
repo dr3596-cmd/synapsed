@@ -1,8 +1,7 @@
-// /app/api/survey/[classId]/route.ts
-
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import { stripAnswerKeys } from "@/lib/survey/diagnostic";
 import { NextRequest, NextResponse } from "next/server";
+import { requireClassMember } from "@/lib/auth";
 
 export async function GET(
   req: NextRequest,
@@ -15,6 +14,9 @@ export async function GET(
     if (!classId) {
       return NextResponse.json({ error: "Missing classId" }, { status: 400 });
     }
+
+    const authResult = await requireClassMember(classId);
+    if (!authResult.ok) return authResult.response;
 
     // Only return ACTIVE surveys to students
     const survey = await prisma.survey.findFirst({

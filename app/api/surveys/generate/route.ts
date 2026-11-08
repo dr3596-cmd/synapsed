@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSyllabusContext, getClassInfo } from "@/lib/survey/syllabusService";
 import { generateDiagnosticSurvey } from "@/lib/survey/diagnostic";
 import { NoCourseMaterialError } from "@/lib/course/topicMap";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
+import { requireClassProfessor } from "@/lib/auth";
 
 // POST /api/surveys/generate - AI generation
 export async function POST(req: NextRequest) {
@@ -13,6 +14,9 @@ export async function POST(req: NextRequest) {
     if (!classId) {
       return NextResponse.json({ error: "classId is required" }, { status: 400 });
     }
+
+    const authResult = await requireClassProfessor(classId);
+    if (!authResult.ok) return authResult.response;
 
     // Get class information and syllabus context
     const classInfo = await getClassInfo(classId);

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Home, Users, Settings, ChevronLeft, ChevronRight, Bell } from "lucide-react";
 import type { ComponentType } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut } from "@/lib/auth/client";
 
 type IconType = ComponentType<{ className?: string }>;
 
@@ -44,7 +44,7 @@ export default function Sidebar({
   });
   const { data: session } = useSession();
   const name = session?.user?.name || session?.user?.email || "Account";
-  const role = (session?.user as { role?: string })?.role || "";
+  const role = session?.user?.role || "";
   const initial = typeof name === 'string' ? name.charAt(0).toUpperCase() : 'A';
 
   return (

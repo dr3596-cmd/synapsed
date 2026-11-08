@@ -3,7 +3,7 @@ import { Calendar, FileText } from "lucide-react";
 import CourseCard from "./CourseCard";
 import { User } from "next-auth";
 import { useMemo } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth/client";
 import useSWR from 'swr';
 import { Button } from "../ui/button";
 import { QuizCard } from "@/components/assessments";

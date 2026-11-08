@@ -17,7 +17,7 @@ import usePathwayStore, { PathwayState, PathwayNodeData } from './store';
 import PathwayNode from './PathwayNode';
 import PathwayEdge from './PathwayEdge';
 import './Pathway.css';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/auth/client';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 

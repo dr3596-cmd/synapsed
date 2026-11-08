@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSyllabusContext, getClassInfo } from "@/lib/survey/syllabusService";
 import { generateDiagnosticSurvey } from "@/lib/survey/diagnostic";
 import { NoCourseMaterialError } from "@/lib/course/topicMap";
+import { requireClassProfessor } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +12,9 @@ export async function POST(req: NextRequest) {
     if (!classId) {
       return NextResponse.json({ error: "classId is required" }, { status: 400 });
     }
+
+    const authResult = await requireClassProfessor(classId);
+    if (!authResult.ok) return authResult.response;
 
     // Get class information and syllabus context
     const classInfo = await getClassInfo(classId);
