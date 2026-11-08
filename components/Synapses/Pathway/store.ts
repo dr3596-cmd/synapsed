@@ -11,6 +11,7 @@ import {
   } from '@xyflow/react';
   import { nanoid } from 'nanoid';
   import { create } from 'zustand';
+  import { incompletePrerequisites } from '@/lib/pathwayLocks';
   
   // Define node data structure
   export type PathwayNodeData = {
@@ -22,6 +23,10 @@ import {
       resourceUrl?: string;
       markdownContent?: string; // Added new optional field for rich content
       dbId?: string; // Database ID for this node
+      completed?: boolean; // Student marked this lesson complete
+      locked?: boolean; // Prerequisite lessons aren't complete yet
+      waitingOn?: string[]; // Titles of the prerequisite lessons still to complete
+      upNext?: boolean; // Unlocked and not yet complete
   };
 
   // Define pathway node type
@@ -87,6 +92,8 @@ import {
     Object.entries(levelGroups).forEach(([lvlStr, group]) => {
 
       group.forEach((node, colIdx) => {
+        const waitingOn = incompletePrerequisites(node, nodes).map((n) => n.title);
+        const locked = waitingOn.length > 0;
         finalNodes.push({
           id: node.nodeId,
           type: 'pathway',
@@ -102,6 +109,10 @@ import {
             duration: node.duration,
             markdownContent: node.markdownContent || 'Click to load content...',
             dbId: node.id,
+            completed: !!node.aiLessonComplete,
+            locked,
+            waitingOn,
+            upNext: !locked && !node.aiLessonComplete,
           }
         });
       });

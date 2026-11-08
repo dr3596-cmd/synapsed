@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { computeMastery } from "@/lib/course/mastery";
+import type { CourseTopic } from "@/lib/course/types";
 
 export async function POST(req: NextRequest) {
   try {
@@ -73,6 +75,27 @@ export async function POST(req: NextRequest) {
           submittedAt: new Date(),
         },
       });
+    }
+
+    // Best-effort mastery snapshot; pathway generation recomputes it if this is skipped.
+    try {
+      const cls = await prisma.class.findUnique({ where: { id: classId }, select: { topicMap: true } });
+      const topics = Array.isArray(cls?.topicMap) ? (cls!.topicMap as unknown as CourseTopic[]) : [];
+      const questions = Array.isArray(survey.questions) ? survey.questions : [];
+      if (topics.length > 0) {
+        await prisma.studentSurveyResponse.updateMany({
+          where: { studentId, surveyId: activeSurveyId },
+          data: {
+            mastery: computeMastery(
+              questions as Parameters<typeof computeMastery>[0],
+              formattedAnswers as Parameters<typeof computeMastery>[1],
+              topics
+            ) as unknown as object,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("[SURVEY_SUBMIT_MASTERY]", error);
     }
 
     return NextResponse.json({ success: true });

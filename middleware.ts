@@ -30,7 +30,10 @@ export async function middleware(req: NextRequest) {
 
   // Redirect unauthenticated users
   if (!token) {
-    return NextResponse.redirect(new URL('/sign-in', req.url));
+    // Remember where the user was going (e.g. a class invite link) so sign-in can return there.
+    const signInUrl = new URL('/sign-in', req.url);
+    signInUrl.searchParams.set('callbackUrl', pathname + req.nextUrl.search);
+    return NextResponse.redirect(signInUrl);
   }
  
 

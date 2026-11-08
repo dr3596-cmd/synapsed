@@ -11,6 +11,9 @@ const SurveySchema = z.object({
       text: z.string(),
       type: z.union([z.literal("short-answer"), z.literal("multiple-choice")]),
       options: z.array(z.string()).optional(),
+      kind: z.enum(["knowledge", "preference"]).optional(),
+      topicId: z.string().optional(),
+      correctAnswer: z.string().optional(),
     })
   ),
 });

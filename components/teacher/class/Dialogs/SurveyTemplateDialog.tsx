@@ -104,7 +104,8 @@ export default function SurveyTemplateDialog({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate template");
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to generate template. Please try again.");
       }
 
       const data = await response.json();
@@ -115,7 +116,7 @@ export default function SurveyTemplateDialog({
     } catch (error) {
       console.error("Template generation error:", error);
       toast("Error", {
-        description: "Failed to generate template. Please try again."
+        description: error instanceof Error ? error.message : "Failed to generate template. Please try again."
       });
     } finally {
       setIsGenerating(false);

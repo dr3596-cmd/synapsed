@@ -10,6 +10,9 @@ const QuestionSchema = z.object({
   required: z.boolean().default(true),
   order: z.number(),
   duplicatedFrom: z.string().optional(),
+  kind: z.enum(['knowledge', 'preference']).optional(),
+  topicId: z.string().optional(),
+  correctAnswer: z.string().optional(),
 });
 
 const CreateSurveySchema = z.object({

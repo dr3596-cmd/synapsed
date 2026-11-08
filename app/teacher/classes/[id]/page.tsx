@@ -7,6 +7,7 @@ import { TeacherDashboard } from "@/components/teacher/class/teacherDashboard"
 import { NewSurveyManagement } from "@/components/teacher/class/NewSurveyManagement"
 import { ClassAssessmentsManagement } from "@/components/teacher/class/ClassAssessmentsManagement"
 import ClassInfoSettings from "@/components/teacher/class/ClassInfoSettings"
+import { ClassAnalytics } from "@/components/teacher/class/ClassAnalytics"
 
 export default function Page() {
   const params = useParams()
@@ -44,8 +45,8 @@ export default function Page() {
         return <NewSurveyManagement classId={classId} />
       case "quizzes-assessments":
         return <ClassAssessmentsManagement classId={classId} />
-      // case "analytics":
-      //   return <Analytics classId={classId} />
+      case "analytics":
+        return <ClassAnalytics classId={classId} />
       default:
         return <ClassInfoSettings classId={classId} />
     }

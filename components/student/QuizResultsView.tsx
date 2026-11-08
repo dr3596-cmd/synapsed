@@ -79,7 +79,12 @@ export function QuizResultsView({ quizResults, classId }: QuizResultsViewProps) 
       // Short answer
       return {
         studentAnswer: answer.answerText || 'No answer provided',
-        correctAnswer: 'Manual grading required',
+        correctAnswer:
+          answer.isCorrect === null
+            ? 'Waiting for your professor to grade this answer'
+            : answer.isCorrect
+              ? 'Graded correct by your professor'
+              : 'Graded incorrect by your professor',
         isCorrect: answer.isCorrect,
       };
     }
@@ -269,7 +274,7 @@ export function QuizResultsView({ quizResults, classId }: QuizResultsViewProps) 
                           {answerDisplay.studentAnswer}
                         </span>
                       </div>
-                      {answer.isCorrect !== null && (
+                      {answer.isCorrect !== null ? (
                         <div
                           className={`px-2 py-1 rounded text-xs font-medium ${
                             answer.isCorrect
@@ -278,6 +283,10 @@ export function QuizResultsView({ quizResults, classId }: QuizResultsViewProps) 
                           }`}
                         >
                           {answer.isCorrect ? 'Correct' : 'Incorrect'}
+                        </div>
+                      ) : (
+                        <div className="px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-800">
+                          Pending grading
                         </div>
                       )}
                     </div>

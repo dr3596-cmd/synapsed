@@ -62,7 +62,11 @@ function PathwayNode({ data }: NodeProps<PathwayNodeType>) {
 
   return (
     <>
-      <div className={`p-3 rounded-lg shadow-md bg-white border-2 ${
+      <div
+        title={data.locked ? `Locked: complete ${data.waitingOn?.join(' and ')} first` : undefined}
+        className={`p-3 rounded-lg shadow-md bg-white border-2 ${
+        data.locked ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed' :
+        data.completed ? 'border-emerald-500 bg-emerald-50' :
         data.type === 'topic' ? 'border-blue-300' : 
         data.type === 'subtopic' ? 'border-green-300' : 
         data.type === 'resource' ? 'border-purple-300' : 
@@ -76,6 +80,20 @@ function PathwayNode({ data }: NodeProps<PathwayNodeType>) {
           <h3 className="text-sm font-bold flex-grow truncate">
             {data.title}
           </h3>
+          {data.locked && (
+            <span title="Locked" className="ml-1 text-slate-500">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
+            </span>
+          )}
+          {data.completed && (
+            <span title="Completed" className="ml-1 text-emerald-600">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </span>
+          )}
           <button 
             onClick={() => setExpanded(!expanded)}
             className="text-gray-500 hover:text-gray-700 p-1"
@@ -93,6 +111,9 @@ function PathwayNode({ data }: NodeProps<PathwayNodeType>) {
         </div>
         
         <div className="flex flex-wrap gap-1 mb-2">
+          {data.upNext && (
+            <span className="text-xs px-2 py-1 rounded-full bg-emerald-600 text-white mr-1">Up next</span>
+          )}
           <NodeBadge text={data.type} type={data.type} />
           {data.difficulty && (
             <NodeBadge text={data.difficulty} type={data.difficulty} />

@@ -120,12 +120,13 @@ export function NewSurveyManagement({ classId }: { classId: string }) {
         setIsEditorOpen(true)
         mutateSurveys()
       } else {
-        throw new Error('Failed to generate survey')
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to generate survey with AI')
       }
     } catch (error) {
       console.error('Error generating survey:', error)
       toast("Error", {
-        description: "Failed to generate survey with AI"
+        description: error instanceof Error ? error.message : "Failed to generate survey with AI"
       })
     } finally {
       setIsGeneratingAI(false)

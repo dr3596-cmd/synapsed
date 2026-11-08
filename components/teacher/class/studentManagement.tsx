@@ -19,6 +19,8 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import TableSkeleton from "@/components/ui/table-skeleton"
+import { StudentFeedbackDialog } from "./Dialogs/StudentFeedbackDialog"
+import { InviteStudentsDialog } from "./Dialogs/InviteStudentsDialog"
 
 interface Student {
   id: string;
@@ -41,6 +43,8 @@ export function StudentManagement({ classId }: { classId: string }) {
   const [studentToRemove, setStudentToRemove] = useState<Student | null>(null)
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [feedbackStudent, setFeedbackStudent] = useState<Student | null>(null)
+  const [isInviteOpen, setIsInviteOpen] = useState(false)
 
   // Fetcher for students
   const studentsFetcher = async (url: string) => {
@@ -108,7 +112,7 @@ export function StudentManagement({ classId }: { classId: string }) {
             <CardTitle>Students</CardTitle>
             <CardDescription>Manage your class roster and invitations.</CardDescription>
           </div>
-          <Button>
+          <Button onClick={() => setIsInviteOpen(true)}>
             <Send className="mr-2 h-4 w-4" />
             Invite Students
           </Button>
@@ -164,6 +168,9 @@ export function StudentManagement({ classId }: { classId: string }) {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setFeedbackStudent(student)}>
+                              Give Feedback
+                            </DropdownMenuItem>
                             {student.status === "pending" && (
                               <DropdownMenuItem onClick={() => handleResendInvite(student)}>
                                 Resend Invite
@@ -189,6 +196,21 @@ export function StudentManagement({ classId }: { classId: string }) {
           </div>
         </CardContent>
       </Card>
+
+      <InviteStudentsDialog
+        classId={classId}
+        open={isInviteOpen}
+        onOpenChange={setIsInviteOpen}
+        enrolledEmails={students.map((s) => s.email)}
+      />
+
+      <StudentFeedbackDialog
+        classId={classId}
+        student={feedbackStudent}
+        onOpenChange={(open) => {
+          if (!open) setFeedbackStudent(null)
+        }}
+      />
 
       <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
         <DialogContent>

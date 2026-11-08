@@ -135,7 +135,7 @@ interface InChatAssessmentData {
   difficulty: string;
   fields: unknown[];
   schema: unknown;
-  correctAnswers: Record<string, unknown>;
+  assessmentId: string;
 }
 const toolInChatAssessmentMap = new Map<string, InChatAssessmentData>();
 const toolDiagramMap = new Map<string, DiagramData>();
@@ -418,7 +418,7 @@ function sanitizeCheckpointThreadId(threadId: unknown): string {
 }
 
 // Helper function to invoke the agent with a simple message
-export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string, conversationId?: string): Promise<AgentResponse> {
+export async function invokeAgent(userMessage: string, threadId?: string, classId?: string, userId?: string, conversationId?: string, lessonId?: string): Promise<AgentResponse> {
   try {
     // Get compiled agent (will compile once on first call)
     const agent = await getCompiledAgent();
@@ -435,7 +435,7 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     currentToolContext = {
       conversationId,
       classId,
-      lessonId: classId,
+      lessonId,
       userId,
       threadId: safeThreadId,
     };
@@ -532,7 +532,7 @@ export async function invokeAgent(userMessage: string, threadId?: string, classI
     if (isCheckpointFormatError(error) && threadId) {
       console.warn('[invokeAgent] Checkpoint format error detected — clearing and retrying thread:', threadId);
       await clearCorruptedCheckpoint(threadId);
-      return invokeAgent(userMessage, threadId, classId, userId, conversationId);
+      return invokeAgent(userMessage, threadId, classId, userId, conversationId, lessonId);
     }
     console.error('Error in invokeAgent:', error);
     throw error;

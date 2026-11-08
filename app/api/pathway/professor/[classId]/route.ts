@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { generatePathwayForStudent } from "@/lib/learning-paths/generatePathway";
+import { NoCourseMaterialError } from "@/lib/course/topicMap";
 
 // GET: Fetch all pathways for a class with student info
 export async function GET(req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
@@ -118,79 +120,31 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
       return NextResponse.json({ error: "Missing studentId" }, { status: 400 });
     }
 
-    // Delete existing pathway for this student
-    await prisma.learningPathway.deleteMany({
-      where: { studentId, classId }
-    });
-
-    // Get student's survey responses for regeneration
     const surveyResponse = await prisma.studentSurveyResponse.findFirst({
-      where: { studentId, classId }
+      where: { studentId, classId },
+      orderBy: { submittedAt: "desc" },
     });
-
     if (!surveyResponse) {
       return NextResponse.json({ error: "No survey response found for this student" }, { status: 404 });
     }
 
-    // Get syllabus content
-    let syllabusContent = "";
-    let learningObjectives = "";
-    let assessmentMethods = "";
-    let prerequisites = "";
-    let courseDescription = "";
-    
-    try {
-      const syllabusResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/syllabus/content?classId=${classId}`);
-      if (syllabusResponse.ok) {
-        const syllabusData = await syllabusResponse.json();
-        if (syllabusData.hasSyllabus) {
-          syllabusContent = syllabusData.content.courseSchedule || "";
-          learningObjectives = syllabusData.content.learningObjectives || "";
-          assessmentMethods = syllabusData.content.assessmentMethods || "";
-          prerequisites = syllabusData.content.prerequisites || "";
-          courseDescription = syllabusData.content.courseDescription || "";
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch syllabus content:", error);
-    }
-
-    // Get survey questions
-    const survey = await prisma.survey.findFirst({ 
-      where: { classId, status: 'ACTIVE' },
-      orderBy: { createdAt: 'desc' }
+    const existing = await prisma.learningPathway.findFirst({
+      where: { studentId, classId, surveyId: surveyResponse.surveyId },
     });
-    const questions = Array.isArray(survey?.questions) ? survey.questions : [];
 
-    // Build enhanced prompt with focus text
-    const basePrompt = 
-      `Course Description:\n${courseDescription}\n\n` +
-      `Prerequisites:\n${prerequisites}\n\n` +
-      `Learning Objectives:\n${learningObjectives}\n\n` +
-      `Course Schedule:\n${syllabusContent}\n\n` +
-      `Assessment Methods:\n${assessmentMethods}\n\n` +
-      `Student Survey Responses:\n` +
-      (surveyResponse.answers as { questionId: string; answer: string }[]).map((ans) => {
-        const q = (questions as { questionId?: string; id?: string; text?: string }[]).find((q) => q.questionId == ans.questionId || q.id == ans.questionId);
-        return `Q: ${q?.text || "Unknown"}\nA: ${ans.answer}`;
-      }).join("\n");
-
-    const enhancedPrompt = focusText 
-      ? `${basePrompt}\n\nPROFESSOR FOCUS: ${focusText}\n\nGenerate a new pathway that also addresses: ${focusText}`
-      : basePrompt;
-
-    // Generate new pathway
-    const generateResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/pathway/generate?studentId=${studentId}&classId=${classId}&prompt=${encodeURIComponent(enhancedPrompt)}`);
-    
-    if (!generateResponse.ok) {
-      throw new Error("Failed to generate new pathway");
-    }
-
-    return NextResponse.json({ 
-      success: true, 
-      message: "Pathway regenerated successfully" 
+    await generatePathwayForStudent({
+      classId,
+      studentId,
+      surveyId: surveyResponse.surveyId,
+      focusArea: focusText || undefined,
+      existingPathwayId: existing?.id,
     });
+
+    return NextResponse.json({ success: true, message: "Pathway regenerated successfully" });
   } catch (error) {
+    if (error instanceof NoCourseMaterialError) {
+      return NextResponse.json({ error: error.message }, { status: 422 });
+    }
     console.error("[PROFESSOR_PATHWAYS_POST]", error);
     return NextResponse.json({ error: "Failed to regenerate pathway" }, { status: 500 });
   }

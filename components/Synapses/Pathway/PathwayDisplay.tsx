@@ -19,6 +19,7 @@ import PathwayEdge from './PathwayEdge';
 import './Pathway.css';
 import { useSession } from 'next-auth/react';
 import { useParams, useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 // No syntax highlighter needed here after moving content to a dedicated page
 
@@ -99,8 +100,13 @@ function PathwayFlow() {
   
   const handleNodeClick = (event: React.MouseEvent, node: Node) => {
     event.stopPropagation();
-    const nodeTitle = (node.data as PathwayNodeData).title;
-    const dbId = (node.data as PathwayNodeData).dbId;
+    const nodeData = node.data as PathwayNodeData;
+    if (nodeData.locked) {
+      toast.info(`Complete ${nodeData.waitingOn?.join(' and ')} first to unlock "${nodeData.title}".`);
+      return;
+    }
+    const nodeTitle = nodeData.title;
+    const dbId = nodeData.dbId;
     if (classIdStr) {
       setIsNavigating(true);
       const idToUse = dbId ?? node.id;

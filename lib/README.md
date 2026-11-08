@@ -24,7 +24,8 @@ Hub: [`../README.md`](../README.md) · Architecture: [`../docs/ARCHITECTURE.md`]
 | `r2/` | Cloudflare R2 uploads | Files, quiz images, student docs |
 | `syllabus/` | Extract / structure syllabus | Syllabus APIs |
 | `survey/` | Survey context helpers for AI generation | Survey generate |
-| `learning-paths/` | Pathway prompt builder (imports study JSON) | Pathway generation |
+| `learning-paths/` | Pathway generator (topic map + mastery → nodes) | Pathway generation |
+| `course/` | Per-class topic map from syllabus + content; mastery scoring | Surveys, pathways |
 | `flashcard/` | Flashcard generation | Flashcard APIs |
 | `Editor/` | BlockNote AI assist | `/api/editorAi` |
 | `content/` | Annotations / content references services | Lesson content UI |
@@ -51,13 +52,7 @@ Docs: [`agent/README.md`](./agent/README.md), [`../AGENT_QUICKSTART.md`](../AGEN
 
 ### `learning-paths/`
 
-`pathwayPrompt.ts` builds prompts and function declarations from:
-
-```text
-study/data/prompts/pathway_generation_spec.json
-```
-
-Changing pathway personalization rules usually means updating that JSON **and** verifying the study evaluation still makes sense ([`../study/README.md`](../study/README.md)).
+`generatePathway.ts` builds a prompt from the class topic map (`course/topicMap.ts`) and the student's per-topic mastery (`course/mastery.ts`), constrains `topicId` to that class's topics, and saves the nodes. The `study/` pipeline keeps its own prompt spec and is independent of this code.
 
 ### `gemini-model.ts`
 
@@ -84,7 +79,7 @@ API upload → lib/r2 → OCR (lib/ocr|rag) → lib/chunking → lib/pinecone �
 **Pathway generation**
 
 ```text
-/api/pathway/generate → learning-paths/pathwayPrompt (+ survey + syllabus context) → Gemini → LearningPathway + PathwayNode
+/api/learning-paths/generate → learning-paths/generatePathway (topic map + survey mastery) → Gemini → LearningPathway + PathwayNode
 ```
 
 ---

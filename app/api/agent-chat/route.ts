@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     // This ensures checkpointer and Prisma stay in sync
     let agentResponse;
     try {
-      agentResponse = await invokeAgent(userMessage, agentThreadId, classId, userId, conversation?.id);
+      agentResponse = await invokeAgent(userMessage, agentThreadId, classId, userId, conversation?.id, lessonId);
       
       // Agent invocation successful - now save messages to Prisma
       // This ensures checkpointer and Prisma are in sync

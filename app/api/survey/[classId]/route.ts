@@ -1,6 +1,7 @@
 // /app/api/survey/[classId]/route.ts
 
 import { prisma } from "@/lib/prisma";
+import { stripAnswerKeys } from "@/lib/survey/diagnostic";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -30,7 +31,8 @@ export async function GET(
       }, { status: 200 });
     }
 
-    return NextResponse.json({ questions: survey.questions });
+    const questions = Array.isArray(survey.questions) ? stripAnswerKeys(survey.questions as { correctAnswer?: unknown }[]) : [];
+    return NextResponse.json({ questions });
   } catch (error) {
     console.error("[GET_SURVEY]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

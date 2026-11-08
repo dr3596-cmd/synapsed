@@ -67,7 +67,8 @@ interface InChatAssessmentData {
   }>
   schema: Record<string, { type: string; required?: boolean; min?: number; message?: string }>
   zodSchema?: z.ZodObject<Record<string, z.ZodTypeAny>>
-  correctAnswers: Record<string, string | number | boolean | string[]>
+  /** Saved quiz id; the answer key stays on the server. */
+  assessmentId?: string
 }
 
 interface Message {
@@ -662,11 +663,14 @@ The student explicitly requested visual mode. You MUST call the createVisualLess
                   {message.inChatAssessmentData ? (
                     <InChatAssessmentForm
                       inChatAssessmentData={message.inChatAssessmentData}
+                      assessmentId={message.inChatAssessmentData.assessmentId}
                       conversationId={threadId || undefined}
                       classId={classId}
                       lessonId={lessonId}
                       userId={userId || undefined}
                       onSubmitSuccess={(feedback) => {
+                        // A graded pop quiz can unlock "Mark lesson complete" on the lesson page
+                        window.dispatchEvent(new Event('lesson-progress-changed'))
                         // Add feedback as a new assistant message
                         const feedbackMessage: Message = {
                           id: (Date.now() + 2).toString(),

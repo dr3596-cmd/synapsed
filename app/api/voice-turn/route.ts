@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
       agentThreadId,
       classId,
       userId,
-      conversation?.id
+      conversation?.id,
+      lessonId
     );
 
     if (conversation) {

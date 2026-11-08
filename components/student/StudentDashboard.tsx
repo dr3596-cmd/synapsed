@@ -1,13 +1,21 @@
 "use client"
-import { Calendar, Layers3, FileText } from "lucide-react";
+import { Calendar, FileText } from "lucide-react";
 import CourseCard from "./CourseCard";
 import { User } from "next-auth";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useSession } from "next-auth/react";
 import useSWR from 'swr';
 import { Button } from "../ui/button";
 import { QuizCard } from "@/components/assessments";
 import { StudentQuiz } from "@/lib/types/quizzes";
+import type { StudentAchievements } from "@/lib/achievements";
+
+/** Academic term for a date: Spring (Jan–May), Summer (Jun–Jul), Fall (Aug–Dec). */
+function academicTerm(date: Date) {
+  const month = date.getMonth();
+  const season = month <= 4 ? "Spring" : month <= 6 ? "Summer" : "Fall";
+  return `${season} ${date.getFullYear()}`;
+}
 
 // This file defines the StudentDashboard component, which is a client-side component that displays the student's dashboard.
 // It fetches the student's classes and displays them in a course card format. It also displays a task list and progress section.
@@ -23,7 +31,6 @@ type ClassType = {
 
 const StudentDashboard = ({ user }: { user?: User }) => {
   const { data: session } = useSession();
-  const [showArchived, setShowArchived] = useState(false);
 
   // Fetcher for student classes
   const classesFetcher = async (url: string) => {
@@ -78,17 +85,22 @@ const StudentDashboard = ({ user }: { user?: User }) => {
     }
   );
 
-  // Dummy semester grouping for now
-  const currentSemester = "Fall 2025";
-  const archivedSemester = "Spring 2025";
+  const currentSemester = academicTerm(new Date());
   const currentClasses = useMemo(() => classes, [classes]);
-  const archivedClasses = useMemo<ClassType[]>(
-    () => [
-      { id: "a1", title: "Intro to Economics", professor: { name: "Dr. Smith" }, progress: 100, link: "/#" },
-      { id: "a2", title: "Biology 101", professor: { name: "Dr. Lee" }, progress: 100, link: "/#" },
-      { id: "a3", title: "World History", professor: { name: "Dr. Patel" }, progress: 100, link: "/#" },
-    ],
-    []
+
+  // Course card progress = share of pathway lessons completed in that class
+  const { data: achievements } = useSWR<StudentAchievements>(
+    session?.user?.id ? "/api/student/achievements" : null,
+    async (url: string) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to load progress");
+      return res.json();
+    },
+    { revalidateOnFocus: true }
+  );
+  const progressByClass = useMemo(
+    () => new Map((achievements?.perClass ?? []).map((c) => [c.classId, c.lessons.percent ?? 0])),
+    [achievements]
   );
 
   return (
@@ -138,7 +150,7 @@ const StudentDashboard = ({ user }: { user?: User }) => {
                   <CourseCard
                     title={cls.title}
                     professor={cls.professor?.name || "Unknown"}
-                    progress={cls.progress || 0}
+                    progress={progressByClass.get(cls.id) ?? 0}
                     link={`/class/${cls.id}`}
                   />
                 </div>
@@ -172,35 +184,6 @@ const StudentDashboard = ({ user }: { user?: User }) => {
           </div>
         )}
 
-        {/* Archived toggle */}
-        <div className="mt-10 text-center">
-          <button
-            type="button"
-            onClick={() => setShowArchived((s) => !s)}
-            className="inline-flex items-center gap-2 text-sm text-emerald-700 hover:text-emerald-800 hover:underline"
-          >
-            <Layers3 className="h-4 w-4" />
-            {showArchived ? "Hide archived classes" : "Show archived classes"}
-          </button>
-        </div>
-
-        {showArchived && (
-          <div className="mt-6">
-            <h3 className="text-sm uppercase tracking-wide text-slate-500 mb-3">{archivedSemester}</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
-              {archivedClasses.map((cls) => (
-                <div className="w-full max-w-sm opacity-80" key={cls.id}>
-                  <CourseCard
-                    title={cls.title}
-                    professor={cls.professor?.name}
-                    progress={cls.progress ?? 0}
-                    link={cls.link || "#"}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

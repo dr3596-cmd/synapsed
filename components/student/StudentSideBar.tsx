@@ -10,9 +10,9 @@ export default function StudentSidebar() {
   const items: SidebarItem[] = [
     { name: "Dashboard", path: "/student/dashboard", icon: Home },
     { name: "Join a Class", path: "/student/join", icon: BookOpen },
-    { name: "Feedback", path: "/feedback", icon: MessageSquare },
-    { name: "Achievements", path: "/achievements", icon: Award },
-    { name: "Settings", path: "/settings", icon: Settings },
+    { name: "Feedback", path: "/student/feedback", icon: MessageSquare },
+    { name: "Achievements", path: "/student/achievements", icon: Award },
+    { name: "Settings", path: "/student/settings", icon: Settings },
   ];
 
   return (

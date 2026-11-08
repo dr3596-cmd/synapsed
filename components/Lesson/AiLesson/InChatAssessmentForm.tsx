@@ -33,7 +33,7 @@ interface InChatAssessmentFormProps {
     fields: FormedibleField[]
     schema: Record<string, SchemaMetadata>
     zodSchema?: z.ZodObject<Record<string, z.ZodTypeAny>>
-    correctAnswers: Record<string, string | number | boolean | string[]>
+    assessmentId?: string
   }
   assessmentId?: string
   conversationId?: string

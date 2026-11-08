@@ -70,16 +70,15 @@ Prefer `surveys/*` for new work. Deep dive: [`../../SURVEY_SYSTEM_README.md`](..
 
 | Path | Role |
 |---|---|
-| `pathway/generate` | Generate pathway |
-| `pathway/generate/batch` | Batch generate |
+| `pathway/generate/batch` | Batch generate for the active survey's respondents |
 | `pathway/get` | Fetch pathway |
 | `pathway/embed` | Embed helpers |
 | `pathway/exists/[classId]/[studentId]` | Existence check |
 | `pathway/professor/[classId]` | Professor view / management |
-| `learning-paths/generate` | Alternate/related generate entry |
+| `learning-paths/generate` | Generate pathways (individual / selected / all) |
 | `learning-paths/[id]/regenerate` | Regenerate |
 
-Prompt shared with study: `lib/learning-paths/pathwayPrompt.ts` → `study/data/prompts/pathway_generation_spec.json`.
+All routes call `lib/learning-paths/generatePathway.ts`: class topic map (`lib/course/topicMap.ts`) + student mastery from the diagnostic survey → Gemini. Nothing is hardcoded to a subject.
 
 ### Flashcards / progress / lesson notes
 

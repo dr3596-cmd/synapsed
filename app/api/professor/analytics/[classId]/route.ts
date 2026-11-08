@@ -1,0 +1,30 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { getClassAnalytics } from "@/lib/analytics";
+
+// GET: engagement, assessment, pathway and at-risk analytics for a class the professor teaches
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { classId } = await params;
+  if (!/^[a-f0-9]{24}$/i.test(classId)) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const cls = await prisma.class.findUnique({ where: { id: classId }, select: { professorId: true } });
+  if (!cls || cls.professorId !== session.user.id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  try {
+    const analytics = await getClassAnalytics(classId);
+    return NextResponse.json(analytics);
+  } catch (error) {
+    console.error("[CLASS_ANALYTICS]", error);
+    return NextResponse.json({ error: "Failed to load analytics" }, { status: 500 });
+  }
+}

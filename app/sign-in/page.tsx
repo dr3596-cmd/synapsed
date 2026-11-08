@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FcGoogle } from "react-icons/fc";
 import { Role } from '@prisma/client';
 
@@ -14,9 +14,37 @@ type UserWithRole = {
   name?: string;
   role?: Role;
 };
-export default function SignInPage() {
+// Kept across the first-login detour (sign in -> choose role -> sign in again).
+const RETURN_KEY = 'synapsed:returnTo';
+
+/** Only same-site paths are allowed, so the parameter can't redirect users to another site. */
+function safeReturnPath(value: string | null): string | null {
+  if (!value || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/sign-in')) return null;
+  return value;
+}
+
+function readStoredReturnPath(): string | null {
+  try {
+    return safeReturnPath(sessionStorage.getItem(RETURN_KEY));
+  } catch {
+    return null;
+  }
+}
+
+function SignInContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = safeReturnPath(searchParams.get('callbackUrl'));
+
+  useEffect(() => {
+    if (!callbackUrl) return;
+    try {
+      sessionStorage.setItem(RETURN_KEY, callbackUrl);
+    } catch {
+      // Storage unavailable; the URL parameter still works for returning users.
+    }
+  }, [callbackUrl]);
 
   useEffect(() => {
     //console.log('Auth status:', status);
@@ -26,9 +54,18 @@ export default function SignInPage() {
       const role = (session?.user as UserWithRole)?.role;
       //console.log('User role:', role);
 
+      const returnTo = callbackUrl ?? readStoredReturnPath();
+
       if (!role) {
         //console.log('Redirecting to choose-role');
         router.push('/choose-role');
+      } else if (returnTo) {
+        try {
+          sessionStorage.removeItem(RETURN_KEY);
+        } catch {
+          // ignore
+        }
+        router.push(returnTo);
       } else if (role === 'STUDENT') {
         //console.log('Redirecting to student dashboard');
         router.push('/student/dashboard');
@@ -37,7 +74,7 @@ export default function SignInPage() {
         router.push('/teacher/dashboard');
       }
     }
-  }, [session, status, router]);
+  }, [session, status, router, callbackUrl]);
 
   if (status === 'loading') {
     return (
@@ -63,5 +100,13 @@ export default function SignInPage() {
         </Button>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInContent />
+    </Suspense>
   );
 }
